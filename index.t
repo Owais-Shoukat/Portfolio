@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Muhammad Owais — Portfolio</title>
+    
+    <!-- FontAwesome for Social Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --neon-green: #4bff96;
+            --neon-glow: rgba(75, 255, 150, 0.4);
+            --bg-dark: #030a04;
+            --card-bg: rgba(3, 10, 4, 0.75);
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background: #010301;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        canvas {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .website-content {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 24px 40px;
+            box-sizing: border-box;
+        }
+
+        /* --- NAVBAR --- */
+        nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(3, 10, 4, 0.85);
+            border: 1px solid rgba(75, 255, 150, 0.35);
+            box-shadow: 0 0 15px rgba(75, 255, 150, 0.15);
+            border-radius: 12px;
+            padding: 14px 28px;
+            width: 100%;
+            max-width: 1200px;
+            margin: 10px auto 0 auto;
+            backdrop-filter: blur(8px);
+            box-sizing: border-box;
+        }
+
+        .nav-brand {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--neon-green);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+        }
+
+        .nav-links a {
+            color: #cfd8dc;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--neon-green);
+            text-shadow: 0 0 8px var(--neon-green);
+        }
+
+        .nav-right-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .nav-search-container {
+            display: flex;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(75, 255, 150, 0.3);
+            border-radius: 8px;
+            padding: 6px 12px;
+            gap: 8px;
+        }
+
+        .nav-search-container input {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #fff;
+            font-size: 0.9rem;
+            width: 140px;
+        }
+
+        .nav-search-container input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .nav-search-container i {
+            color: var(--neon-green);
+            font-size: 0.85rem;
+        }
+
+        /* Hamburger Button (Visible on Mobile) */
+        .hamburger-btn {
+            display: none;
+            background: transparent;
+            border: 1px solid rgba(75, 255, 150, 0.4);
+            color: var(--neon-green);
+            font-size: 1.2rem;
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger-btn:hover {
+            background: rgba(75, 255, 150, 0.1);
+            box-shadow: 0 0 10px rgba(75, 255, 150, 0.3);
+        }
+
+        /* Mobile Sidebar Overlay & Drawer */
+        .sidebar-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            z-index: 102;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-sidebar {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100%;
+            background: #030a04;
+            border-right: 1px solid rgba(75, 255, 150, 0.35);
+            box-shadow: 5px 0 25px rgba(0, 0, 0, 0.8);
+            z-index: 103;
+            display: flex;
+            flex-direction: column;
+            padding: 30px 20px;
+            box-sizing: border-box;
+            transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .mobile-sidebar.open {
+            left: 0;
+        }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 35px;
+            border-bottom: 1px solid rgba(75, 255, 150, 0.2);
+            padding-bottom: 15px;
+        }
+
+        .sidebar-logo {
+            font-size: 1.4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffffff 30%, var(--neon-green) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            text-shadow: 0 0 15px rgba(75, 255, 150, 0.3);
+        }
+
+        .sidebar-close-btn {
+            background: transparent;
+            border: none;
+            color: var(--neon-green);
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-close-btn:hover {
+            transform: rotate(90deg);
+        }
+
+        .sidebar-links {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .sidebar-links a {
+            color: #cfd8dc;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-links a:hover {
+            color: var(--neon-green);
+            background: rgba(75, 255, 150, 0.08);
+            border-color: rgba(75, 255, 150, 0.25);
+            box-shadow: 0 0 12px rgba(75, 255, 150, 0.15);
+            transform: translateX(5px);
+        }
+
+        /* --- HERO & LOGO SECTION --- */
+        .hero {
+            max-width: 1200px;
+            margin: 20px auto;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .logo-title {
+            font-size: clamp(2.5rem, 5vw, 4.2rem);
+            font-weight: 800;
+            margin: 0 0 8px 0;
+            background: linear-gradient(135deg, #ffffff 30%, var(--neon-green) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 25px rgba(75, 255, 150, 0.2);
+            letter-spacing: 1px;
+        }
+
+        .hero-subtitle {
+            font-size: 1.1rem;
+            color: #9ea7b0;
+            margin-bottom: 30px;
+            letter-spacing: 0.5px;
+        }
+
+        /* --- PROJECTS CARDS GRID --- */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            width: 100%;
+            margin-bottom: 30px;
+        }
+
+        .project-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(75, 255, 150, 0.25);
+            border-radius: 12px;
+            padding: 24px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--neon-green), transparent);
+            opacity: 0.4;
+            transition: opacity 0.3s ease;
+        }
+
+        .project-card:hover {
+            border-color: rgba(75, 255, 150, 0.7);
+            box-shadow: 0 0 20px rgba(75, 255, 150, 0.2);
+            transform: translateY(-4px);
+        }
+
+        .project-card:hover::before {
+            opacity: 1;
+        }
+
+        .project-card h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.25rem;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .project-card h3 i {
+            font-size: 1rem;
+            color: var(--neon-green);
+            opacity: 0.7;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .project-card:hover h3 i {
+            opacity: 1;
+            transform: translateX(3px) translateY(-3px);
+        }
+
+        .project-card p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #a0aec0;
+            line-height: 1.5;
+        }
+
+        .tech-tags {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .tech-tag {
+            font-size: 0.75rem;
+            background: rgba(75, 255, 150, 0.1);
+            color: var(--neon-green);
+            padding: 3px 8px;
+            border-radius: 4px;
+            border: 1px solid rgba(75, 255, 150, 0.2);
+        }
+
+        /* --- VIEW MY WORK BUTTON --- */
+        .cta-btn {
+            background: transparent;
+            color: var(--neon-green);
+            border: 1.5px solid var(--neon-green);
+            padding: 12px 28px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(75, 255, 150, 0.15);
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .cta-btn:hover {
+            background: var(--neon-green);
+            color: #030a04;
+            box-shadow: 0 0 20px rgba(75, 255, 150, 0.6);
+        }
+
+        /* --- SOCIAL PROFILES FOOTER --- */
+        .social-links {
+            display: flex;
+            gap: 18px;
+            align-items: center;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .social-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            background: rgba(3, 10, 4, 0.85);
+            border: 1px solid rgba(75, 255, 150, 0.3);
+            border-radius: 50%;
+            color: var(--neon-green);
+            font-size: 1.1rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(75, 255, 150, 0.1);
+        }
+
+        .social-link:hover {
+            background: var(--neon-green);
+            color: #030a04;
+            border-color: var(--neon-green);
+            box-shadow: 0 0 15px rgba(75, 255, 150, 0.6);
+            transform: scale(1.1);
+        }
+
+        /* --- RESPONSIVE ADJUSTMENTS --- */
+        @media (max-width: 900px) {
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+            .nav-links {
+                display: none;
+            }
+            .hamburger-btn {
+                display: inline-block;
+            }
+            .website-content {
+                padding: 16px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Mobile Sidebar Overlay & Drawer -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <div class="mobile-sidebar" id="mobileSidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">Owais.dev</div>
+            <button class="sidebar-close-btn" id="sidebarCloseBtn"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="sidebar-links">
+            <a href="#" onclick="toggleSidebar()">Home</a>
+            <a href="#" onclick="toggleSidebar()">Skills</a>
+            <a href="#" onclick="toggleSidebar()">Education</a>
+            <a href="#" onclick="toggleSidebar()">Services</a>
+            <a href="#" onclick="toggleSidebar()">Projects</a>
+        </div>
+    </div>
+
+    <!-- Background Canvas -->
+    <canvas id="c"></canvas>
+
+    <!-- Website Main Content Container -->
+    <div class="website-content">
+
+        <!-- Navbar -->
+        <nav>
+            <div class="nav-brand">Owais.dev</div>
+            <div class="nav-links">
+                <a href="#">Home</a>
+                <a href="#">Skills</a>
+                <a href="#">Education</a>
+                <a href="#">Services</a>
+                <a href="#">Projects</a>
+            </div>
+            <div class="nav-right-group">
+                <div class="nav-search-container">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Search portfolio...">
+                </div>
+                <button class="hamburger-btn" id="hamburgerBtn" title="Open Menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Hero & Projects Section -->
+        <section class="hero">
+            <h1 class="logo-title">Muhammad Owais</h1>
+            <p class="hero-subtitle">Web Developer & Python Developer</p>
+
+            <!-- 3 Web Development Project Cards as GitHub Links -->
+            <div class="projects-grid">
+                <a href="https://github.com/yourusername/ecommerce-platform" target="_blank" class="project-card">
+                    <div>
+                        <h3>E-Commerce Platform <i class="fa-solid fa-arrow-up-right-from-square"></i></h3>
+                        <p>A full-stack online shopping ecosystem equipped with secure payment gateways, cart mechanics, and dynamic inventory management.</p>
+                    </div>
+                    <div class="tech-tags">
+                        <span class="tech-tag">React</span>
+                        <span class="tech-tag">Node.js</span>
+                        <span class="tech-tag">MongoDB</span>
+                    </div>
+                </a>
+
+                <a href="https://github.com/yourusername/saas-dashboard" target="_blank" class="project-card">
+                    <div>
+                        <h3>SaaS Dashboard UI <i class="fa-solid fa-arrow-up-right-from-square"></i></h3>
+                        <p>An administrative analytical control center providing real-time data visualizers, tracking matrices, and dark mode layouts.</p>
+                    </div>
+                    <div class="tech-tags">
+                        <span class="tech-tag">JavaScript</span>
+                        <span class="tech-tag">Tailwind</span>
+                        <span class="tech-tag">Chart.js</span>
+                    </div>
+                </a>
+
+                <a href="https://github.com/yourusername/ai-prompt-studio" target="_blank" class="project-card">
+                    <div>
+                        <h3>AI Prompt Studio <i class="fa-solid fa-arrow-up-right-from-square"></i></h3>
+                        <p>A modern web application interfacing with cutting-edge language models to generate, refine, and store custom structured prompts.</p>
+                    </div>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Python</span>
+                        <span class="tech-tag">FastAPI</span>
+                        <span class="tech-tag">HTML/CSS</span>
+                    </div>
+                </a>
+            </div>
+
+            <!-- CTA Button -->
+            <button class="cta-btn">View My Work</button>
+        </section>
+
+        <!-- Social Profiles at Bottom Left -->
+        <div class="social-links">
+            <a href="https://instagram.com" target="_blank" class="social-link" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+            <a href="https://facebook.com" target="_blank" class="social-link" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+            <a href="https://github.com" target="_blank" class="social-link" title="Github"><i class="fa-brands fa-github"></i></a>
+            <a href="https://linkedin.com" target="_blank" class="social-link" title="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+            <a href="https://whatsapp.com" target="_blank" class="social-link" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+        </div>
+
+    </div>
+
+    <!-- Background Animation & Sidebar Script -->
+    <script>
+        const hamburgerBtn = document.getElementById('hamburgerBtn');
+        const mobileSidebar = document.getElementById('mobileSidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const sidebarCloseBtn = document.getElementById('sidebarCloseBtn');
+
+        function toggleSidebar() {
+            mobileSidebar.classList.toggle('open');
+            sidebarOverlay.classList.toggle('active');
+        }
+
+        hamburgerBtn.addEventListener('click', toggleSidebar);
+        sidebarCloseBtn.addEventListener('click', toggleSidebar);
+        sidebarOverlay.addEventListener('click', toggleSidebar);
+
+        const canvas = document.getElementById('c');
+        const ctx = canvas.getContext('2d');
+
+        let W, H;
+
+        function resize() {
+            W = canvas.width = innerWidth;
+            H = canvas.height = innerHeight;
+        }
+
+        resize();
+
+        window.addEventListener('resize', () => {
+            resize();
+            buildAll();
+        });
+
+        const NEON = '75,255,150';
+
+        /* ---------------------------------
+            HEXAGON WIREFRAME
+        --------------------------------- */
+        function hexPoints(cx, cy, r, rot) {
+            const pts = [];
+            for (let i = 0; i < 6; i++) {
+                const a = rot + (Math.PI / 3) * i;
+                pts.push([
+                    cx + Math.cos(a) * r,
+                    cy + Math.sin(a) * r
+                ]);
+            }
+            return pts;
+        }
+
+        let hexes = [];
+        let diagonals = [];
+        let stars = [];
+
+        /* ---------------------------------
+            BUILD BACKGROUND ELEMENTS
+        --------------------------------- */
+        function buildAll() {
+            /* HEXAGON CLUSTER */
+            hexes = [];
+            const anchorX = W * 0.86;
+            const anchorY = H * 0.18;
+            const sizes = [0.16, 0.22, 0.11, 0.27, 0.14];
+
+            sizes.forEach((s) => {
+                hexes.push({
+                    cx: anchorX + (Math.random() - 0.5) * W * 0.25,
+                    cy: anchorY + (Math.random() - 0.5) * H * 0.3,
+                    r: Math.min(W, H) * s,
+                    baseRot: Math.random() * Math.PI,
+                    rotSpeed: (Math.random() > 0.5 ? 1 : -1) * (0.00015 + Math.random() * 0.00035),
+                    phase: Math.random() * Math.PI * 2,
+                    speed: 0.0006 + Math.random() * 0.001
+                });
+            });
+
+            /* DIAGONAL LINES */
+            diagonals = [];
+            const dCount = 7;
+            for (let i = 0; i < dCount; i++) {
+                const x0 = W * (0.55 + Math.random() * 0.5);
+                const y0 = H * (Math.random() * 0.4 - 0.1);
+                const angle = Math.PI * (0.55 + Math.random() * 0.35);
+                const length = Math.max(W, H) * (0.6 + Math.random() * 0.6);
+
+                diagonals.push({
+                    x0,
+                    y0,
+                    x1: x0 + Math.cos(angle) * length,
+                    y1: y0 + Math.sin(angle) * length,
+                    offset: Math.random(),
+                    speed: 0.0003 + Math.random() * 0.0006
+                });
+            }
+
+            /* STARS */
+            stars = [];
+            const sCount = Math.floor((W * H) / 9000);
+            for (let i = 0; i < sCount; i++) {
+                stars.push({
+                    x: Math.random() * W,
+                    y: Math.random() * H,
+                    r: 0.5 + Math.random() * 1.3,
+                    base: 0.15 + Math.random() * 0.4,
+                    tw: Math.random() * Math.PI * 2,
+                    twSpeed: 0.5 + Math.random() * 1.2
+                });
+            }
+        }
+
+        buildAll();
+
+        /* ---------------------------------
+            DRAW HEXAGONS
+        --------------------------------- */
+        function drawHexes(t) {
+            hexes.forEach(h => {
+                const currentRot = h.baseRot + t * h.rotSpeed;
+                const pts = hexPoints(h.cx, h.cy, h.r, currentRot);
+                const glow = 0.5 + 0.5 * Math.sin(t * h.speed + h.phase);
+
+                ctx.strokeStyle = `rgba(${NEON},${0.28 + 0.35 * glow})`;
+                ctx.lineWidth = 1.2;
+                ctx.shadowColor = `rgba(${NEON},0.6)`;
+                ctx.shadowBlur = 8 + 10 * glow;
+
+                ctx.beginPath();
+                ctx.moveTo(pts[0][0], pts[0][1]);
+                for (let i = 1; i < pts.length; i++) {
+                    ctx.lineTo(pts[i][0], pts[i][1]);
+                }
+                ctx.closePath();
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+
+                /* CORNER NODES */
+                ctx.fillStyle = `rgba(${NEON},${0.4 + 0.4 * glow})`;
+                pts.forEach(p => {
+                    ctx.beginPath();
+                    ctx.arc(p[0], p[1], 1.6, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+            });
+        }
+
+        /* ---------------------------------
+            DRAW DIAGONAL LINES
+        --------------------------------- */
+        function drawDiagonals(t) {
+            diagonals.forEach(d => {
+                ctx.strokeStyle = `rgba(${NEON},0.14)`;
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(d.x0, d.y0);
+                ctx.lineTo(d.x1, d.y1);
+                ctx.stroke();
+
+                /* TRAVELING LIGHT */
+                const progress = (t * d.speed + d.offset) % 1;
+                const px = d.x0 + (d.x1 - d.x0) * progress;
+                const py = d.y0 + (d.y1 - d.y0) * progress;
+
+                const grad = ctx.createRadialGradient(px, py, 0, px, py, 16);
+                grad.addColorStop(0, `rgba(${NEON},0.85)`);
+                grad.addColorStop(1, `rgba(${NEON},0)`);
+
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.arc(px, py, 16, 0, Math.PI * 2);
+                ctx.fill();
+            });
+        }
+
+        /* ---------------------------------
+            DRAW STARS
+        --------------------------------- */
+        function drawStars(t) {
+            stars.forEach(s => {
+                const tw = 0.6 + 0.4 * Math.sin(t / 600 * s.twSpeed + s.tw);
+                ctx.fillStyle = `rgba(${NEON},${s.base * tw})`;
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+                ctx.fill();
+            });
+        }
+
+        /* ---------------------------------
+            CORNER FRAME ACCENTS
+        --------------------------------- */
+        function drawCorners() {
+            ctx.strokeStyle = `rgba(${NEON},0.5)`;
+            ctx.lineWidth = 1.5;
+
+            /* TOP LEFT */
+            ctx.beginPath();
+            ctx.moveTo(0, H * 0.16);
+            ctx.lineTo(W * 0.06, H * 0.16);
+            ctx.lineTo(W * 0.1, 0);
+            ctx.stroke();
+
+            /* BOTTOM LEFT */
+            ctx.beginPath();
+            ctx.moveTo(0, H * 0.965);
+            ctx.lineTo(W * 0.18, H * 0.965);
+            ctx.lineTo(W * 0.22, H);
+            ctx.stroke();
+
+            /* BOTTOM RIGHT */
+            ctx.strokeStyle = `rgba(${NEON},0.35)`;
+            for (let i = 0; i < 4; i++) {
+                const off = i * 14;
+                ctx.beginPath();
+                ctx.moveTo(W - 60 + off, H);
+                ctx.lineTo(W - 10 + off, H - 60);
+                ctx.stroke();
+            }
+        }
+
+        /* ---------------------------------
+            ANIMATION LOOP
+        --------------------------------- */
+        function loop(t) {
+            ctx.clearRect(0, 0, W, H);
+            drawStars(t);
+            drawDiagonals(t);
+            drawHexes(t);
+            drawCorners();
+            requestAnimationFrame(loop);
+        }
+
+        requestAnimationFrame(loop);
+    </script>
+</body>
+</html>
